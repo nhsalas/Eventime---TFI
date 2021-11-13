@@ -1,0 +1,48 @@
+﻿@page "/vista_bitacora"
+@attribute [Authorize(Policy = "Admin")]
+
+@using SERVICIOS.Bitacora.Dominio
+@using System.Net.Http
+@using System.Net.Http.Json
+
+@inject HttpClient Http
+@inject I18nText traductor
+
+<h1><strong>Bitácora</strong></h1>
+
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true"
+                FilterMode="FilterMode.Advanced" PageSize="5" AllowPaging="true" AllowSorting="true" Data="@Movimientos" TItem="Bitacora" ColumnWidth="200px"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="Bitacora" Property="FechaHora" Title="@miTexto.DateTime" FormatString="{0:d}" />
+        <RadzenDataGridColumn TItem="Bitacora" Property="Descripcion" Title="@miTexto.Description" />
+        <RadzenDataGridColumn TItem="Bitacora" Property="Severidad" Title="@miTexto.Severity" />
+        <RadzenDataGridColumn TItem="Bitacora" Property="Usuario" Title="@miTexto.User" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    Text miTexto = new Text();
+
+    string URLBitacora = "https://localhost:44394/WebApi/Bitacora";
+
+    Bitacora oBitacora = new Bitacora();
+
+    protected async Task Grabar()
+    {
+
+        var respuesta = await Http.PostAsJsonAsync(URLBitacora, oBitacora);
+
+    }
+
+    public List<Bitacora> Movimientos = new List<Bitacora>();
+
+    // METODO PARA QUE CARGUE APENAS INICIE LA PAGINA (como el form.load)
+    protected override async Task OnInitializedAsync()
+    {
+        miTexto = await traductor.GetTextTableAsync<Text>(this);
+        Movimientos = await Http.GetFromJsonAsync<List<Bitacora>>(URLBitacora);
+    }
+
+}

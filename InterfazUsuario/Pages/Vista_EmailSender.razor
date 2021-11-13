@@ -1,0 +1,54 @@
+﻿@page "/vista_emailsender"
+@attribute [Authorize]
+
+@using SERVICIOS.Email.DAL
+
+@inject I18nText traductor
+
+<RadzenTemplateForm Data="@oMail">
+    <div class="row">
+        <div class="col-10">
+            <RadzenFieldset Text="Enviar notificaciones">
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.Email />
+                    </div>
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenTextBox Name="Email" Style="width:100%" @bind-Value="oMail.Email" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.Message />
+                    </div>
+                    <div class="col-md-6 fieldSpace" fieldSpace>
+                        <RadzenTextBox Name="Mensaje" Style="width:100%" @bind-Value="oMail.Mensaje" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex" />
+
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenButton Text=@miTexto.SendEmail ButtonStyle="ButtonStyle.Primary" Click=@(args => Notificar()) />
+                    </div>
+                </div>
+            </RadzenFieldset>
+        </div>
+
+    </div>
+</RadzenTemplateForm>
+
+
+@code {
+
+    Text miTexto = new Text();
+
+    MailService oMail = new MailService();
+
+    protected async Task Notificar()
+    {
+        oMail.EnviarMail(oMail.Mensaje, oMail.Email);
+    }
+
+}

@@ -1,0 +1,29 @@
+﻿@inject I18nText TranslateService
+
+<select class="form-control form-control-sm" @onchange="CambiarLenguajeActual">
+    <option value="en" selected="@(LenguajeActual == "en")">English</option>
+    <option value="es" selected="@(LenguajeActual == "es")">Español</option>
+</select>
+
+@code {
+    string LenguajeActual;
+    protected override async Task OnInitializedAsync()
+    {
+        var lang = await TranslateService.GetCurrentLanguageAsync();
+        if (new[] { "en", "es" }.Contains(lang.Split('-')[0]))
+        {
+            LenguajeActual = lang;
+        }
+        else
+        {
+            LenguajeActual = "en";
+        }
+
+    }
+    async Task CambiarLenguajeActual(ChangeEventArgs args)
+    {
+        Console.WriteLine($"OnChange:{args.Value}");
+        LenguajeActual = args.Value as string;
+        await TranslateService.SetCurrentLanguageAsync(LenguajeActual);
+    }
+}

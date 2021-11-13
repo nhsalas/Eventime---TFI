@@ -1,0 +1,98 @@
+﻿@page "/vista_invitados"
+@attribute [Authorize]
+
+@using DOMINIO
+
+@using System.Net.Http
+@using System.Net.Http.Json
+
+@inject HttpClient Http
+@inject I18nText traductor
+
+<RadzenTemplateForm Data="@oInvitado">
+    <div class="row">
+        <div class="col-10">
+            <RadzenFieldset Text="Agregar Invitados">
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.DNI />
+                    </div>
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenNumeric Name="DNI" Style="width:100%" @bind-Value="oInvitado.DNI" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.Name />
+                    </div>
+                    <div class="col-md-6 fieldSpace" fieldSpace>
+                        <RadzenTextBox Name="nombre" Style="width:100%" @bind-Value="oInvitado.nombre" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.Surname />
+                    </div>
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenTextBox Name="apellido" Style="width:100%" @bind-Value="oInvitado.apellido" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.Email />
+                    </div>
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenTextBox Name="email" Style="width:100%" @bind-Value="oInvitado.email" />
+                    </div>
+                </div>
+
+                <RadzenFieldset Text="@miTexto.Events">
+                    <div class="row">
+                        <div class="col-md-2 align-items-center d-flex">
+                            <RadzenLabel Text="@miTexto.EventName" />
+                        </div>
+                        <div class="col-md-6 fieldSpace">
+                            <RadzenDropDown AllowClear="true" TValue="int"
+                                            Data=@ListaEventos TextProperty="Nombre" ValueProperty="EventoId" @bind-Value="@oInvitado.id_evento"></RadzenDropDown>
+                        </div>
+                    </div>
+                </RadzenFieldset>
+
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex" />
+
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenButton Text=@miTexto.Save ButtonStyle="ButtonStyle.Primary" Click=@(args => Grabar()) />
+                    </div>
+                </div>
+            </RadzenFieldset>
+        </div>
+
+    </div>
+</RadzenTemplateForm>
+
+@code {
+    Text miTexto = new Text();
+
+    string URLEvento = "https://localhost:44394/WebApi/Evento";
+    string URLInvitado = "https://localhost:44394/WebApi/Invitado";
+
+    Evento oEvento = new Evento();
+    Invitado oInvitado = new Invitado();
+
+
+    public List<Evento> ListaEventos = new List<Evento>();
+    public List<Invitado> ListaInvitados = new List<Invitado>();
+
+    protected async Task Grabar()
+    {
+        var respuesta = await Http.PostAsJsonAsync(URLInvitado, oInvitado);
+    }
+
+    // METODO PARA QUE CARGUE APENAS INICIE LA PAGINA (como el form.load)
+    protected override async Task OnInitializedAsync()
+    {
+        miTexto = await traductor.GetTextTableAsync<Text>(this);
+        ListaEventos = await Http.GetFromJsonAsync<List<Evento>>(URLEvento);
+    }
+}

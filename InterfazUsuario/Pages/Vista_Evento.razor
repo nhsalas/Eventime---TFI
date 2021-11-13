@@ -1,0 +1,28 @@
+﻿@page "/vista_evento"
+@attribute [Authorize(Policy = "Admin")]
+
+@using System.Net.Http
+@using System.Net.Http.Json
+
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<h3>Acceder al evento</h3>
+
+<!-- <img src="./images/QR_Evento.jpg" alt="Alternate Text" style="width:200px; height:200px" />-->
+<BSImage IsRounded="true" Alignment="Alignment.Center" src="./images/ScanEvent.png" alt="Acceso Evento" style="width:200px; height:200px" />
+
+<p>Si no podes visualizar el código QR, hace click en el botón "ACCEDER AL EVENTO" debajo:</p>
+
+<BSButton Color="Color.Info" Size="Size.Large" @onclick="AccederEvento">ACCEDER AL EVENTO</BSButton>
+<BSButton Color="Color.Warning" Size="Size.Large" >AGREGAR INVITADOS</BSButton>
+
+@code {
+
+
+    private async Task AccederEvento()
+    {
+        // var response = await Http.Send("https://qrco.de/bcPLHx");
+        NavManager.NavigateTo("https://qrco.de/bcPLHx");
+    }
+}

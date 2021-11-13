@@ -1,0 +1,114 @@
+﻿@inject I18nText traductor
+
+<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">Eventime</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<AuthorizeView Policy="Admin">
+    <Authorized>
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+            <ul class="nav flex-column">
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> @miTexto.Home
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="vista_cliente">
+                        <span class="oi oi-folder" aria-hidden="true"></span> @miTexto.Clients
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="vista_bitacora">
+                        <span class="oi oi-eye" aria-hidden="true"></span> @miTexto.Log
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="vista_evento">
+                        <span class="oi oi-media-play" aria-hidden="true"></span> @miTexto.MyEvent
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="vista_nuevoevento">
+                        <span class="oi oi-plus" aria-hidden="true"></span> @miTexto.CreateEvent
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="vista_invitados">
+                        <span class="oi oi-people" aria-hidden="true"></span> @miTexto.Guests
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="FAQ">
+                        <span class="oi oi-question-mark" aria-hidden="true"></span> FAQ
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="calendario">
+                        <span class="oi oi-calendar" aria-hidden="true"></span> @miTexto.Calendar
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="mercadopago">
+                        <span class="oi oi-cart" aria-hidden="true"></span> @miTexto.MercadoPago
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="vista_emailsender">
+                        <span class="oi oi-inbox" aria-hidden="true"></span> @miTexto.SendEmail
+                    </NavLink>
+                </li>
+            </ul>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+<AuthorizeView Policy="User">
+    <Authorized>
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+            <ul class="nav flex-column">
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> @miTexto.Home
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="vista_evento">
+                        <span class="oi oi-media-play" aria-hidden="true"></span> @miTexto.MyEvent
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="FAQ">
+                        <span class="oi oi-question-mark" aria-hidden="true"></span> FAQ
+                    </NavLink>
+                    </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="mercadopago">
+                        <span class="oi oi-cart" aria-hidden="true"></span> @miTexto.MercadoPago
+                    </NavLink>
+                </li>
+            </ul>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    Text miTexto = new Text();
+
+    protected override async Task OnInitializedAsync()
+    {
+        miTexto = await traductor.GetTextTableAsync<Text>(this);
+    }
+
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

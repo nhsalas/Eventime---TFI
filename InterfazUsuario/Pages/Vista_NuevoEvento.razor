@@ -1,0 +1,149 @@
+﻿@page "/vista_nuevoevento"
+@attribute [Authorize]
+
+@using DOMINIO
+@using Dominio
+
+@using System.Net.Http
+@using System.Net.Http.Json
+
+@inject HttpClient Http
+@inject I18nText traductor
+@inject IJSRuntime JsRuntime
+
+<h3>Vista_NuevoEvento</h3>
+
+<RadzenTemplateForm Data="@oEvento">
+    <div class="row">
+        <div class="col-10">
+            <RadzenFieldset Text="Creación de Eventos">
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.FromDate />
+                    </div>
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenDatePicker Name="FechaInicio" Style="width:100%" @bind-Value="oEvento.FechaInicio" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.ToDate />
+                    </div>
+                    <div class="col-md-6 fieldSpace" fieldSpace>
+                        <RadzenDatePicker Name="FechaFinalizacion" Style="width:100%" @bind-Value="oEvento.FechaFinalizacion" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.EventName />
+                    </div>
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenTextBox Name="Nombre" Style="width:100%" @bind-Value="oEvento.Nombre" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.EventType />
+                    </div>
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenTextBox Name="Tipo" Style="width:100%" @bind-Value="oEvento.Tipo" />
+                    </div>
+                </div>
+
+                <RadzenFieldset Text="@miTexto.Cliente">
+                    <div class="row">
+                        <div class="col-md-2 align-items-center d-flex">
+                            <RadzenLabel Text="@miTexto.Cliente" />
+                        </div>
+                        <div class="col-md-6 fieldSpace">
+                            <RadzenDropDown AllowClear="true" TValue="int"
+                                            Data=@listaclientes TextProperty="RazonSocial" ValueProperty="NroCliente" @bind-Value="@oEvento.NroCliente"></RadzenDropDown>
+                        </div>
+                    </div>
+                </RadzenFieldset>
+
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex" />
+
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenButton Text=@miTexto.Save ButtonStyle="ButtonStyle.Primary" Click=@(args => Grabar()) />
+                    </div>
+                </div>
+            </RadzenFieldset>
+        </div>
+
+    </div>
+</RadzenTemplateForm>
+
+<RadzenGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+            FilterMode="FilterMode.Advanced" AllowPaging="true" PageSize="4" AllowSorting="true" Data="@ListaEventos" TItem="Evento" ColumnWidth="200px">
+
+    <Columns>
+        <RadzenGridColumn TItem="Evento" Property="FechaInicio" Title=@miTexto.FromDate />
+        <RadzenGridColumn TItem="Evento" Property="FechaFinalizacion" Title=@miTexto.ToDate />
+        <RadzenGridColumn TItem="Evento" Property="Nombre" Title=@miTexto.EventName />
+        <RadzenGridColumn TItem="Evento" Property="Tipo" Title=@miTexto.EventType />
+        <RadzenGridColumn TItem="Evento" Property="Cliente.RazonSocial" Title=@miTexto.BusinessName />
+
+        <RadzenGridColumn TItem="Evento" Title=@miTexto.Update>
+            <Template Context="data">
+                <RadzenLink Path="" Text=@miTexto.Update Target="_blank" />
+            </Template>
+
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="Evento" Title=@miTexto.Delete>
+            <Template Context="data">
+                <RadzenLink Path="" Text=@miTexto.Delete />
+            </Template>
+        </RadzenGridColumn>
+    </Columns>
+
+</RadzenGrid>
+
+@code {
+
+    Text miTexto = new Text();
+
+    string URLEvento = "https://localhost:44394/WebApi/Evento";
+    string URLCliente = "https://localhost:44394/WebApi/Cliente";
+
+    Evento oEvento = new Evento();
+    Cliente oCliente = new Cliente();
+
+    int idCliente;
+
+    public List<Cliente> listaclientes = new List<Cliente>();
+
+    protected async Task Grabar()
+    {
+        // oEvento.NroCliente = idCliente;
+        DateTime FechaActual = DateTime.Now;
+        if (oEvento.FechaInicio < FechaActual)
+        {
+            await JsRuntime.InvokeVoidAsync("alert","La fecha de inicio no puede ser anterior a la actual");
+        }
+        else if (oEvento.NroCliente==0)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Debe seleccionar un cliente");
+            
+        }
+        else
+        {
+                var respuesta = await Http.PostAsJsonAsync(URLEvento, oEvento);
+        }
+
+
+    }
+
+    public List<Evento> ListaEventos = new List<Evento>();
+
+    // METODO PARA QUE CARGUE APENAS INICIE LA PAGINA (como el form.load)
+    protected override async Task OnInitializedAsync()
+    {
+        miTexto = await traductor.GetTextTableAsync<Text>(this);
+        ListaEventos = await Http.GetFromJsonAsync<List<Evento>>(URLEvento);
+        listaclientes = await Http.GetFromJsonAsync<List<Cliente>>(URLCliente);
+    }
+
+
+}

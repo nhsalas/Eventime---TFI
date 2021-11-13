@@ -1,0 +1,22 @@
+﻿@inject I18nText traductor
+
+<AuthorizeView>
+    <Authorized>
+        <a href="logout">@miTexto.Logout</a>
+    </Authorized>
+    <NotAuthorized>
+        <a href="login?redirectUri=/">@miTexto.Login</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code
+{
+    Text miTexto = new Text();
+
+    protected override async Task OnInitializedAsync()
+    {
+        miTexto = await traductor.GetTextTableAsync<Text>
+    (this);
+    }
+
+}

@@ -1,0 +1,139 @@
+﻿@page "/vista_cliente"
+@attribute [Authorize]
+
+@using Dominio
+@using SERVICIOS.Bitacora.Dominio
+@using System.Net.Http
+@using System.Net.Http.Json
+@using System.IO
+@using Data
+
+@inject Microsoft.JSInterop.IJSRuntime JS
+@*@inject ExportToFileService exportService*@
+
+@inject HttpClient Http
+@inject I18nText traductor
+
+<RadzenTemplateForm Data="@oCliente">
+    <div class="row">
+        <div class="col-10">
+            <RadzenFieldset Text="Listado de Clientes">
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.CUIT />
+                    </div>
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenNumeric Name="CUIT" Style="width:100%" @bind-Value="oCliente.CUIT" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.BusinessName />
+                    </div>
+                    <div class="col-md-6 fieldSpace" fieldSpace>
+                        <RadzenTextBox Name="RazonSocial" Style="width:100%" @bind-Value="oCliente.RazonSocial" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.Balance />
+                    </div>
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenNumeric Name="Saldo" Style="width:100%" @bind-Value="oCliente.Saldo" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.Name />
+                    </div>
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenTextBox Name="nombre" Style="width:100%" @bind-Value="oCliente.nombre" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex">
+                        <RadzenLabel Text=@miTexto.Surname />
+                    </div>
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenTextBox Name="apellido" Style="width:100%" @bind-Value="oCliente.apellido" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 align-items-center d-flex" />
+
+                    <div class="col-md-6 fieldSpace">
+                        <RadzenButton Text=@miTexto.Save ButtonStyle="ButtonStyle.Primary" Click=@(args => Grabar()) />
+                    </div>
+
+                </div>
+            </RadzenFieldset>
+        </div>
+
+    </div>
+</RadzenTemplateForm>
+
+<RadzenGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+            FilterMode="FilterMode.Advanced" AllowPaging="true" PageSize="4" AllowSorting="true" Data="@listaclientes" TItem="Cliente" ColumnWidth="200px">
+
+    <Columns>
+        <RadzenGridColumn TItem="Cliente" Property="CUIT" Title=@miTexto.CUIT />
+        <RadzenGridColumn TItem="Cliente" Property="RazonSocial" Title=@miTexto.BusinessName />
+        <RadzenGridColumn TItem="Cliente" Property="Saldo" Title=@miTexto.Balance />
+        <RadzenGridColumn TItem="Cliente" Property="nombre" Title=@miTexto.Name />
+        <RadzenGridColumn TItem="Cliente" Property="apellido" Title=@miTexto.Surname />
+
+        <RadzenGridColumn TItem="Cliente" Title=@miTexto.Update>
+            <Template Context="data">
+                <RadzenLink Path="" Text=@miTexto.Update Target="_blank" />
+            </Template>
+
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="Cliente" Title=@miTexto.Delete>
+            <Template Context="data">
+                <RadzenLink Path="" Text=@miTexto.Delete />
+            </Template>
+        </RadzenGridColumn>
+    </Columns>
+
+</RadzenGrid>
+
+<div class="col-md-6 fieldSpace">
+    <RadzenButton Text=@miTexto.Export ButtonStyle="ButtonStyle.Info" Click=@(args => CrearPDF()) />
+</div>
+
+@code {
+
+    Text miTexto = new Text();
+
+    string URLCliente = "https://localhost:44394/WebApi/Cliente";
+
+    Cliente oCliente = new Cliente();
+
+    protected async Task Grabar()
+    {
+
+        var respuesta = await Http.PostAsJsonAsync(URLCliente, oCliente);
+
+    }
+
+    public List<Cliente> listaclientes = new List<Cliente>();
+
+    // METODO PARA QUE CARGUE APENAS INICIE LA PAGINA (como el form.load)
+    protected override async Task OnInitializedAsync()
+    {
+        miTexto = await traductor.GetTextTableAsync<Text>(this);
+        listaclientes = await Http.GetFromJsonAsync<List<Cliente>>(URLCliente);
+    }
+
+    protected async Task CrearPDF()
+    {
+        SERVICIOS.Reportes.ExportService export = new SERVICIOS.Reportes.ExportService();
+
+        using (MemoryStream excelStream = export.CreatePdf(listaclientes))
+        {
+            await JS.SaveAs("Sample.pdf", excelStream.ToArray());
+        }
+
+    }
+
+}
