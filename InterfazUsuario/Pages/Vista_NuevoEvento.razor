@@ -1,8 +1,9 @@
 ﻿@page "/vista_nuevoevento"
-@attribute [Authorize]
+@attribute [Authorize(Policy = "Admin")]
 
 @using DOMINIO
 @using Dominio
+@using SERVICIOS 
 
 @using System.Net.Http
 @using System.Net.Http.Json
@@ -104,8 +105,14 @@
 
     Text miTexto = new Text();
 
-    string URLEvento = "https://localhost:44394/WebApi/Evento";
-    string URLCliente = "https://localhost:44394/WebApi/Cliente";
+    //string URLEvento = ApplicationSettings.Current.URLEvento_Local;
+    //string URLCliente = ApplicationSettings.Current.URLCliente_Local;
+
+    //string URLEvento = ApplicationSettings.Current.URLEvento_Somee;
+    //string URLCliente = ApplicationSettings.Current.URLCliente_Somee;
+
+    string URLEvento = ApplicationSettings.Current.URLEvento_Azure;
+    string URLCliente = ApplicationSettings.Current.URLCliente_Azure;
 
     Evento oEvento = new Evento();
     Cliente oCliente = new Cliente();
@@ -125,11 +132,11 @@
         else if (oEvento.NroCliente==0)
         {
             await JsRuntime.InvokeVoidAsync("alert", "Debe seleccionar un cliente");
-            
+
         }
         else
         {
-                var respuesta = await Http.PostAsJsonAsync(URLEvento, oEvento);
+            var respuesta = await Http.PostAsJsonAsync(URLEvento, oEvento);
         }
 
 

@@ -12,10 +12,6 @@ namespace WebApi.Controllers
     [ApiController]
     public class EventoController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         [HttpPost]
         public IActionResult Add(Evento evento)

@@ -1,29 +1,111 @@
 ﻿@page "/mercadopago"
 @attribute [Authorize]
 
-@inject IJSRuntime JS
+@using DOMINIO
+@using System.Net.Http
+@using System.Net.Http.Json
+@using SERVICIOS
+@using System.Net.Http
+@using System.Net.Http.Json
 
-<h3>Vista_MercadoPago</h3>
+@inject I18nText traductor
+@inject IJSRuntime JS
+@inject HttpClient Http
+@inject NavigationManager Navegar
+
+
+<h3>Pantalla de Pago</h3>
 
 <body>
-    <form id="form-checkout">
-        <input type="text" name="cardNumber" id="form-checkout__cardNumber" />
-        <input type="text" name="cardExpirationMonth" id="form-checkout__cardExpirationMonth" />
-        <input type="text" name="cardExpirationYear" id="form-checkout__cardExpirationYear" />
-        <input type="text" name="cardholderName" id="form-checkout__cardholderName" />
-        <input type="email" name="cardholderEmail" id="form-checkout__cardholderEmail" />
-        <input type="text" name="securityCode" id="form-checkout__securityCode" />
-        <select name="issuer" id="form-checkout__issuer"></select>
-        <select name="identificationType" id="form-checkout__identificationType"></select>
-        <input type="text" name="identificationNumber" id="form-checkout__identificationNumber" />
-        <select name="installments" id="form-checkout__installments"></select>
-        <button type="submit" id="form-checkout__submit">Pagar</button>
-        <progress value="0" class="progress-bar">Cargando...</progress>
-    </form>
+    <RadzenTemplateForm Data="@oServicio">
 
+        <RadzenFieldset Text="@miTexto.EventName">
+            <div class="row">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="@miTexto.Event" />
+                </div>
+                <div class="col-md-6 fieldSpace">
+                    <RadzenDropDown AllowClear="true" TValue="int" Placeholder="Seleccione un evento"
+                                    Data=@ListaEventos TextProperty="Nombre" ValueProperty="EventoId" @bind-Value="@oServicio.id_evento"></RadzenDropDown>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Qué servicio desea agregar?" />
+                </div>
+                <div class="col-md-6 fieldSpace">
+                    <RadzenDropDown Placeholder="Seleccione un servicio" TValue="string" Data="ServiciosNombres" @bind-Value="@oServicio.nombre"></RadzenDropDown>
+                </div>
+            </div>
+
+            <RadzenButton Text="PAGAR" ButtonStyle="ButtonStyle.Info" Click=@(args => PagarMercadoPago()) />
+
+        </RadzenFieldset>
+
+    </RadzenTemplateForm>
 </body>
 
 @code {
 
+    Text miTexto = new Text();
+
+    Servicio oServicio = new Servicio();
+
+    //string URLmp = ApplicationSettings.Current.URLMp_Local;
+    //string URLEvento = ApplicationSettings.Current.URLEvento_Local;
+
+    //string URLmp = ApplicationSettings.Current.URLMp_Somee;
+    //string URLEvento = ApplicationSettings.Current.URLEvento_Somee;
+
+    string URLmp = ApplicationSettings.Current.URLMp_Azure;
+    string URLEvento = ApplicationSettings.Current.URLEvento_Azure;
+
+    public List<Evento> ListaEventos = new List<Evento>();
+
+    public List<object> ServiciosNombres = new List<object>();
+
+    string idpago;
+
+    private async void PagarMercadoPago()
+    {
+
+        if(oServicio.nombre == "Streaming")
+        {
+            oServicio.precio = 35000;
+        }
+        if (oServicio.nombre == "Hologramas")
+        {
+            oServicio.precio = 50000;
+        }
+        if (oServicio.nombre == "Videoconferencias")
+        {
+            oServicio.precio = 25000;
+        }
+
+        var solicitud = await Http.PostAsJsonAsync<Servicio>(URLmp, oServicio);
+
+        var mensaje = solicitud.Content.ReadAsStringAsync();
+
+        if (mensaje.Result != null)
+        {
+            Navegar.NavigateTo(mensaje.Result);
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("alert", "Error");
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        miTexto = await traductor.GetTextTableAsync<Text>(this);
+        ListaEventos = await Http.GetFromJsonAsync<List<Evento>>(URLEvento);
+
+        ServiciosNombres.Add("Streaming");
+        ServiciosNombres.Add("Hologramas");
+        ServiciosNombres.Add("Videoconferencias");
+    }
 
 }
+

@@ -12,10 +12,6 @@ namespace WebApi.Controllers
     [ApiController]
     public class ClienteController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         [HttpPost]
         public IActionResult Add(Cliente cliente)

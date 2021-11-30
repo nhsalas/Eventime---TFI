@@ -15,7 +15,8 @@ namespace DAL.Tools
         static SqlHelper()
         {
             //conString = ApplicationSettings.Current.ConexionSQL;
-            conString = ApplicationSettings.Current.ConexionSomee;
+            //conString = ApplicationSettings.Current.ConexionSomee;
+            conString = ApplicationSettings.Current.ConexionAzure;
         }
 
         //ExecuteNonQuery

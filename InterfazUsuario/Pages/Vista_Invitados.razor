@@ -5,6 +5,7 @@
 
 @using System.Net.Http
 @using System.Net.Http.Json
+@using SERVICIOS
 
 @inject HttpClient Http
 @inject I18nText traductor
@@ -74,8 +75,14 @@
 @code {
     Text miTexto = new Text();
 
-    string URLEvento = "https://localhost:44394/WebApi/Evento";
-    string URLInvitado = "https://localhost:44394/WebApi/Invitado";
+    //string URLEvento = ApplicationSettings.Current.URLEvento_Local;
+    //string URLInvitado = ApplicationSettings.Current.URLInvitado_Local;
+
+    //string URLEvento = ApplicationSettings.Current.URLEvento_Somee;
+    //string URLInvitado = ApplicationSettings.Current.URLEvento_Somee;
+
+    string URLEvento = ApplicationSettings.Current.URLEvento_Azure;
+    string URLInvitado = ApplicationSettings.Current.URLInvitado_Azure;
 
     Evento oEvento = new Evento();
     Invitado oInvitado = new Invitado();

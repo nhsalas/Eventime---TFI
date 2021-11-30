@@ -1,5 +1,5 @@
 ﻿@page "/vista_evento"
-@attribute [Authorize(Policy = "Admin")]
+@attribute [Authorize]
 
 @using System.Net.Http
 @using System.Net.Http.Json
@@ -22,7 +22,7 @@
 
     private async Task AccederEvento()
     {
-        // var response = await Http.Send("https://qrco.de/bcPLHx");
-        NavManager.NavigateTo("https://qrco.de/bcPLHx");
+        // var response = await Http.Send(""https://meet.jit.si/AttractiveEchoesCultivateLow"");
+        NavManager.NavigateTo("https://meet.jit.si/AttractiveEchoesCultivateLow");
     }
 }

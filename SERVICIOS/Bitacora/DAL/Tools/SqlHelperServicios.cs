@@ -13,7 +13,8 @@ namespace SERVICIOS.Bitacora.DAL.Tools
         static string conString;
         static SqlHelperServicios()
         {
-            conString = ApplicationSettings.Current.ConexionSQL;
+            // conString = ApplicationSettings.Current.ConexionSQL;
+            conString = ApplicationSettings.Current.ConexionSomee;
         }
 
         //ExecuteNonQuery

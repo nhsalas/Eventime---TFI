@@ -17,6 +17,8 @@ namespace SERVICIOS.Bitacora.DAL.Repositories.SQL
         // HARDCODEADO, CAMBIAR DESPUES
 
         private static string cnnApp = ApplicationSettings.Current.ConexionSQL;
+
+        private static string cnnSomee = ApplicationSettings.Current.ConexionSomee;
         private string InsertStatement
         {
             get => "INSERT INTO [dbo].[bitacora] "
@@ -29,7 +31,7 @@ namespace SERVICIOS.Bitacora.DAL.Repositories.SQL
         }
         public void Add(Dominio.Bitacora bitacora)
         {
-            using (SqlConnection sqlConn = new SqlConnection(cnnApp))
+            using (SqlConnection sqlConn = new SqlConnection(cnnSomee))
             {
                 try
                 {

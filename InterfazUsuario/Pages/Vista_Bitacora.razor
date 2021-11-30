@@ -4,6 +4,7 @@
 @using SERVICIOS.Bitacora.Dominio
 @using System.Net.Http
 @using System.Net.Http.Json
+@using SERVICIOS
 
 @inject HttpClient Http
 @inject I18nText traductor
@@ -25,7 +26,10 @@
 @code {
     Text miTexto = new Text();
 
-    string URLBitacora = "https://localhost:44394/WebApi/Bitacora";
+
+    //string URLBitacora = ApplicationSettings.Current.URLBitacora_Local;
+    //string URLBitacora = ApplicationSettings.Current.URLBitacora_Somee;
+    string URLBitacora = ApplicationSettings.Current.URLBitacora_Azure;
 
     Bitacora oBitacora = new Bitacora();
 

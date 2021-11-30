@@ -20,6 +20,10 @@ namespace DAL.Repositories.SQL
 
         private static string cnnApp = ApplicationSettings.Current.ConexionSQL;
 
+        private static string cnnSomee = ApplicationSettings.Current.ConexionSomee;
+
+        private static string cnnAzure = ApplicationSettings.Current.ConexionAzure;
+
         public IConfiguration Configuration { get; set; }
 
         public DayEventRepository(IConfiguration configuration)
@@ -37,7 +41,7 @@ namespace DAL.Repositories.SQL
                     DayEventId = id
                 };
 
-                using (IDbConnection con = new SqlConnection(cnnApp))
+                using (IDbConnection con = new SqlConnection(cnnAzure))
                 {
                     if (con.State == ConnectionState.Closed) con.Open();
 
@@ -57,7 +61,7 @@ namespace DAL.Repositories.SQL
         public DayEvent GetEvent(DateTime eventDate)
         {
             _oDayEvent = new DayEvent();
-            using (IDbConnection con = new SqlConnection(cnnApp))
+            using (IDbConnection con = new SqlConnection(cnnAzure))
             {
                 if (con.State == ConnectionState.Closed) con.Open();
 
@@ -83,7 +87,7 @@ namespace DAL.Repositories.SQL
         {
             _oDayEvents = new List<DayEvent>();
 
-            using (IDbConnection con = new SqlConnection(cnnApp))
+            using (IDbConnection con = new SqlConnection(cnnAzure))
             {
                 if (con.State == ConnectionState.Closed) con.Open();
 
@@ -107,7 +111,7 @@ namespace DAL.Repositories.SQL
             {
                 int operationType = Convert.ToInt32(oDayEvent.DayEventId == 0 ? OperationType.Insert : OperationType.Update);
 
-                using (IDbConnection con = new SqlConnection(cnnApp))
+                using (IDbConnection con = new SqlConnection(cnnAzure))
                 {
                     if (con.State == ConnectionState.Closed) con.Open();
 

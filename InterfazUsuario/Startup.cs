@@ -233,7 +233,7 @@ namespace InterfazUsuario
                 endpoints.MapFallbackToPage("/_Host");
             });
 
-            Rotativa.AspNetCore.RotativaConfiguration.Setup(env.WebRootPath, "../Rotativa");
+            
         }
     }
 }

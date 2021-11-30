@@ -1,5 +1,5 @@
 ﻿@page "/vista_cliente"
-@attribute [Authorize]
+@attribute [Authorize(Policy = "Admin")]
 
 @using Dominio
 @using SERVICIOS.Bitacora.Dominio
@@ -7,6 +7,7 @@
 @using System.Net.Http.Json
 @using System.IO
 @using Data
+@using SERVICIOS 
 
 @inject Microsoft.JSInterop.IJSRuntime JS
 @*@inject ExportToFileService exportService*@
@@ -105,7 +106,9 @@
 
     Text miTexto = new Text();
 
-    string URLCliente = "https://localhost:44394/WebApi/Cliente";
+    // string URLCliente = ApplicationSettings.Current.URLCliente_Local;
+    // string URLCliente = ApplicationSettings.Current.URLCliente_Somee;
+    string URLCliente = ApplicationSettings.Current.URLCliente_Azure;
 
     Cliente oCliente = new Cliente();
 

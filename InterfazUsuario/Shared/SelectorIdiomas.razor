@@ -1,8 +1,8 @@
 ﻿@inject I18nText TranslateService
 
 <select class="form-control form-control-sm" @onchange="CambiarLenguajeActual">
-    <option value="en" selected="@(LenguajeActual == "en")">English</option>
     <option value="es" selected="@(LenguajeActual == "es")">Español</option>
+    <option value="en" selected="@(LenguajeActual == "en")">English</option>
 </select>
 
 @code {

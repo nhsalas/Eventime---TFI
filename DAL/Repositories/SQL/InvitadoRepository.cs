@@ -16,6 +16,10 @@ namespace DAL.Repositories.SQL
     {
         private static string cnnApp = ApplicationSettings.Current.ConexionSQL;
 
+        private static string cnnSomee = ApplicationSettings.Current.ConexionSomee;
+
+        private static string cnnAzure = ApplicationSettings.Current.ConexionAzure;
+
         #region Statements
         private string InsertStatement
         {
@@ -45,7 +49,7 @@ namespace DAL.Repositories.SQL
         #endregion
         public void Add(Invitado invitado)
         {
-            using (SqlConnection sqlConn = new SqlConnection(cnnApp))
+            using (SqlConnection sqlConn = new SqlConnection(cnnAzure))
             {
                 try
                 {

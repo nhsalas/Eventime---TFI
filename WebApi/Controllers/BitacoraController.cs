@@ -13,10 +13,6 @@ namespace WebApi.Controllers
     [ApiController]
     public class BitacoraController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         [HttpPost]
         public IActionResult Add(Bitacora bitacora)

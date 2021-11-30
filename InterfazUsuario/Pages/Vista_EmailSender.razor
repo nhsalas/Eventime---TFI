@@ -4,6 +4,7 @@
 @using SERVICIOS.Email.DAL
 
 @inject I18nText traductor
+@inject IJSRuntime JS
 
 <RadzenTemplateForm Data="@oMail">
     <div class="row">
@@ -46,9 +47,16 @@
 
     MailService oMail = new MailService();
 
+    protected override async Task OnInitializedAsync()
+    {
+        miTexto = await traductor.GetTextTableAsync<Text>(this);
+
+    }
+
     protected async Task Notificar()
     {
         oMail.EnviarMail(oMail.Mensaje, oMail.Email);
+        await JS.InvokeVoidAsync("alert", "Mensaje enviado correctamente");
     }
 
 }

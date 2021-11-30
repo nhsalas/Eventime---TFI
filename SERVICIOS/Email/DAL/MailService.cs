@@ -15,9 +15,9 @@ namespace SERVICIOS.Email.DAL
         public string Mensaje { get; set; }
         public void EnviarMail(string mensaje, string email)
         {
-            var fromAddress = new MailAddress("eventime.tfi@gmail.com", "Sistema - Eventime TFI");
+            var fromAddress = new MailAddress(ApplicationSettings.Current.UsernameSMTP, "Sistema - Eventime TFI");
             var toAddress = new MailAddress(email, "To Name");
-            const string fromPassword = "eventime123";
+            string fromPassword = ApplicationSettings.Current.PasswordSMTP;
             const string subject = "Notificacion";
             string body = mensaje.Trim();
 

@@ -13,11 +13,6 @@ namespace WebApi.Controllers
     public class InvitadoController : Controller
     {
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [HttpPost]
         public IActionResult Add(Invitado invitado)
         {
